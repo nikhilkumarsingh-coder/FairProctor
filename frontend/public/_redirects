@@ -1,0 +1,6 @@
+/staff/*  /staff/index.html  200
+/admin/*  /staff/index.html  200
+/admin  /staff/index.html  200
+/review/*  /staff/index.html  200
+/review  /staff/index.html  200
+/*  /index.html  200

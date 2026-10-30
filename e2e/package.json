@@ -1,0 +1,20 @@
+{
+  "name": "fairproctor-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "candidate": "node candidate.mjs",
+    "staff": "node staff.mjs",
+    "account": "node account.mjs",
+    "live": "node live.mjs",
+    "coding": "node coding.mjs",
+    "demo": "node demo.mjs",
+    "rules": "node rules.mjs",
+    "seb": "node seb.mjs",
+    "audio": "node audio.mjs",
+    "kiosk": "node kiosk.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}

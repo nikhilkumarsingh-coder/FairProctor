@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node / builds
+node_modules/
+frontend/dist/
+
+# Generated data and models (rebuilt by data/generate.py and fairproctor.pipeline)
+data/sample/
+artifacts/
+
+# Private: databases, logins, snapshots, pilot keys and codes (never commit)
+backend/data/
+pilot/out/
+*.db
+*.db-wal
+*.db-shm
+.env
+*.seb
+
+# Test output
+e2e/shots/
+
+# Tools and OS files
+*.exe
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

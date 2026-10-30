@@ -1,0 +1,229 @@
+==============================================================================
+ FAIRPROCTOR — PROJECT SUMMARY (everything done so far)
+ Deviathon 2.0 / Integraminds · Mission Bharat
+ "Proctoring that does not punish a shared room"
+ Status as of 29 October 2026
+==============================================================================
+
+------------------------------------------------------------------------------
+1. THE IDEA
+------------------------------------------------------------------------------
+Remote tests in India are often taken on a phone, over 2G, in a dim room that
+other people walk through. Most proctoring tools flag exactly those candidates.
+
+FairProctor separates:
+  - the ENVIRONMENT (dim room, shared home, cyber cafe, phone held low, 2G video)
+  - from BEHAVIOUR (second phone, searching, pasting, sharing answers, a helper,
+    copied code).
+
+It ranks the review queue so reviewers see the likeliest real malpractice first,
+each with time-stamped evidence, and it tells every candidate what was noticed
+and what was NOT counted against them, so they can reply (appeal).
+
+------------------------------------------------------------------------------
+2. TIMELINE
+------------------------------------------------------------------------------
+24 Oct   Idea fixed. Synthetic data generator (5,000 sessions), ML model,
+         research reviewer console, candidate page, phone pre-check.
+24–26 Oct Design choices checked on real public datasets: Cheating Scenario
+         Dataset, EdNet-KT1, ESC-50, MUSAN, and our own 3 test videos.
+26 Oct   STEP 1: FastAPI + PostgreSQL + JWT backend.
+         STEP 2: React frontend. Fixed a signup 500 error on the Windows PC.
+27 Oct   Profile + change password. Live notices for candidates and a live
+         monitor for admins/reviewers (after "ML is not flagging" feedback).
+27–28 Oct Coding exam: 4 languages, hidden tests judged on the server, code
+         similarity, paste/typing patterns, a separate trained coding model.
+28 Oct   PHASE 1: fairness report, Priya–Rahul demo story, "Try the demo"
+         buttons, new README top + chart, DEMO.md, Docker + CI.
+28–29 Oct PHASE 2: pilot kit (role cards, consent, sealed key, rehearsal,
+         report, cleanup). Rehearsal ran successfully on the Windows PC.
+29 Oct   Real pilot created on the PC: "hostel pilot", 10 participants,
+         sitting 4 (live). Waiting for the pilot day.
+
+------------------------------------------------------------------------------
+3. SUBMISSION REQUIREMENTS — STATUS
+------------------------------------------------------------------------------
+[DONE]    React frontend, works on mobile, form validation
+[DONE]    FastAPI REST backend
+[DONE]    PostgreSQL (SQLite locally; all tests pass on both)
+[DONE]    Signup/login, hashed passwords (scrypt), JWT, user + admin roles
+          (plus a reviewer role)
+[DONE]    README + screenshots (46 screenshots in docs/screenshots)
+[PENDING] Deploy (Vercel + Render + Neon) — Dockerfile ready, not deployed
+[PENDING] GitHub repo — .gitignore and CI file ready, repo not created
+[PENDING] Demo video — DEMO.md has the 3-minute order
+
+------------------------------------------------------------------------------
+4. WHAT IS BUILT
+------------------------------------------------------------------------------
+4.1 Backend (backend/) — FastAPI + PostgreSQL/SQLite + JWT
+  - Auth: signup, login (email+password or roll no.+code), logout, JWT with
+    token_version (a password change logs out other devices), 5-try lock.
+  - Admin: tests (CSV upload for questions, JSON upload for coding problems with
+    reference solutions checked first), sittings, join codes, candidate CSV
+    import with one-time login codes, open, close & score, jobs, audit log,
+    deletion requests.
+  - Exam: join, consent, pre-check, start (resume-safe), event stream with
+    sequence numbers (idempotent, 2G retries safe), submit, result, appeal.
+  - Review: ranked queue, session evidence (other candidates only as
+    pseudonyms), decisions, appeals, live monitor.
+  - Coding: run on samples, run on own input, submit on hidden tests (only
+    pass/fail per test leaves the server), marks.
+  - Code runner: Python, C++17, Java, JavaScript; CPU/memory/output/file limits,
+    process kill, unprivileged user on Linux.
+  - Fairness report endpoint (per sitting).
+  - Demo mode endpoint (one-click demo logins; off by default on PostgreSQL).
+  - Migrations 001–004 for both SQLite and PostgreSQL.
+
+4.2 Frontend (frontend/) — React 19 + TypeScript + Vite + Tailwind
+  - Candidate (phone first, English + Hindi): login, signup, join, consent,
+    pre-check (light, backlight, face, sharpness, connection), one question
+    per screen, offline-safe answers, camera numbers on the device only,
+    live notices (left the screen, second person, paste), result, "not counted
+    against you", appeal, delete my data, profile + password.
+  - Coding screen: problem tabs, code editor (highlight.js), Run samples,
+    Run with my input, Submit, drafts saved on the device.
+  - Reviewer: queue (filters, search, J/K keys), evidence timeline, reasons with
+    clickable moments, decisions, appeals, live monitor, coding view with
+    side-by-side code match.
+  - Admin: tests, sittings, candidate import, live counts, close & score,
+    "Open evidence" per candidate, FAIRNESS REPORT page.
+  - "Try the demo" box on the login page. Light and dark mode everywhere.
+
+4.3 ML — question test model (fairproctor/)
+  - Gradient-boosted trees (scikit-learn), monotonic constraints, isotonic
+    calibration, cross-validation grouped by sitting, explanations by feature
+    contribution, environment-neutral adjustment.
+  - Signals: silent pauses then correct answers, answer timing, answer match
+    (rarity weighted, rings), leaving the window, paste length, another person.
+  - Bandwidth and device are NOT model inputs.
+  - Results (5,000 synthetic sessions, out of fold):
+      * Review first: 6.0% of sessions hold 91.5% of cases, 90.3% precision
+      * Reviewing the top 10% catches 97% of cases
+      * Every confirmed case within the top 44.9% (55% cut vs old rules)
+      * Precision of first 100: 95% (old rules 47%)
+      * Honest low-bandwidth vs normal sent to review: 48.4% vs 45.3%
+        (gap +3 points); old rules 76.4% vs 32.6% (gap +44 points)
+      * AUC 0.9918; at one frame every 5 s: 0.9915
+
+4.4 ML — coding model
+  - MOSS-style code similarity (winnowing, renamed variables still match),
+    verbatim check, paste share, untyped characters, no corrections, bursts,
+    unusually fast accepts. Own trained model.
+  - Results (5,125 synthetic candidates): AUC 0.989; review line 8.9% of
+    candidates catches 95%; honest flagged 3.7%; simple "any 50+ char paste or
+    tab switch" rule flags 79% of honest candidates.
+
+4.5 Fairness report (Phase 1)
+  - Per sitting: share of each group sent to review — other people around,
+    connection, light, device, framing (language for coding) — FairProctor vs
+    old rules at the same workload, 95% Wilson intervals, Newcombe gaps.
+  - Demo sitting: honest phone users flagged 86 points more often by the old
+    rules than laptop users; FairProctor: no clear difference. In Review first
+    FairProctor put 0% of honest candidates, in every group.
+
+4.6 Demo story (Phase 1)
+  - "Morning sitting — already scored" with 200 reference candidates plus:
+      * Priya (honest; 2G, phone held low, dim shared room): CLEARED (38),
+        with 5 "not counted" reasons. Old rules would rank her #9 of 202.
+      * Rahul (second phone): REVIEW FIRST (97), 11 silent pauses, head down
+        76% vs 5%. Old rules would rank him about #82.
+
+4.7 Pilot kit (Phase 2, folder pilot/)
+  - pilot.prepare: creates the pilot sitting, participants P01..., balanced
+    secret roles (~40% malpractice), printable cards (English + Hindi), one
+    card per person, consent form, sealed key.
+  - pilot.dry_run: rehearsal with simulated participants through the real API.
+  - pilot.report: results vs the sealed key (caught, flagged, right reason,
+    old rules at the same number of flags, intervals, chart), fills README.
+  - pilot.cleanup: deletes the pilot data (promised within 7 days).
+  - Roles — honest: quiet room, dim room, shared room, phone held low, slow
+    connection, interrupted. Malpractice: second phone, searching, sharing
+    answers (pair), helper. Coding: honest, copy from internet, copy partner,
+    type from phone.
+
+4.8 Docs and tooling
+  - README.md (new top section, chart, results), DEMO.md, docs/API.md,
+    frontend/README.md, e2e/README.md, pilot/PILOT.md, reports/RESULTS.md,
+    reports/CODING_RESULTS.md, research check reports.
+  - Dockerfile, docker-compose.yml (PostgreSQL + app + demo data),
+    .github/workflows/ci.yml (tests on SQLite + PostgreSQL, frontend build).
+
+------------------------------------------------------------------------------
+5. TESTING
+------------------------------------------------------------------------------
+  - Backend: 37 tests, all passing on SQLite AND PostgreSQL
+    (test_flow 7, test_coding 2, test_runner 9, test_fairness 12, test_pilot 7).
+  - Browser (Playwright): 6 suites passing — candidate, staff, account, live,
+    coding, demo.
+  - Pilot rehearsal ran end to end on the Windows PC (12 + 6 simulated people).
+  - Not tested here: building the Docker image (registries blocked in the
+    build sandbox); the container start-up script was tested on PostgreSQL.
+
+------------------------------------------------------------------------------
+6. HOW TO RUN (Windows CMD — always from the project folder)
+------------------------------------------------------------------------------
+  cd /d D:\Codekarma\fairproctor2\fairproctor
+  python -m backend.scripts.seed_demo --reset      (WIPES data; fresh demo)
+  python -m uvicorn backend.app:app --port 8000    (open http://127.0.0.1:8000)
+
+  Frontend dev (optional): cd /d D:\Codekarma\fairproctor-frontend\frontend
+                           npm install  &  npm run dev
+
+  Docker (one command):    docker compose up --build
+
+  Pilot day:
+    cloudflared.exe tunnel --url http://localhost:8000
+    python -m pilot.prepare --cards-only --dir pilot\out\hostel-pilot --url <link>
+    (admin → Close & score)
+    python -m pilot.report --dir pilot\out\hostel-pilot --update-readme
+    python -m pilot.cleanup --dir pilot\out\hostel-pilot --yes
+
+------------------------------------------------------------------------------
+7. DEMO LOGINS
+------------------------------------------------------------------------------
+  Admin      admin@fairproctor.demo / Admin@2026
+  Reviewer   reviewer@fairproctor.demo / Review@2026
+  Priya      roll no. STORY01, code PRIYA1
+  Rahul      roll no. STORY02, code RAHUL1
+  Join codes FP-DEMO26 (questions), FP-CODE26 (coding)
+  TEAM01–03 and CODE01–03 codes: backend\data\demo_logins.txt
+  (or use the "Try the demo" buttons on the login page)
+
+------------------------------------------------------------------------------
+8. PROJECT RATING (honest)
+------------------------------------------------------------------------------
+                         Start   Now
+  Idea                    9      9.5
+  ML / technical depth    9      9.5
+  Full-stack requirements 8      8    (deploy + GitHub pending)
+  UI / UX                 8      8.5
+  Engineering quality     7.5    8.5
+  Real-world proof        4      5    (pilot kit ready, no real data yet)
+  Demo readiness          5      7    (no live link / video yet)
+  OVERALL                 7.5    ~8.3   → 9.3–9.5 possible after the next steps
+
+------------------------------------------------------------------------------
+9. NEXT STEPS
+------------------------------------------------------------------------------
+  1. Run the real pilot (10 people, "hostel pilot", sitting 4). Screen-record
+     the live monitor. Then pilot.report --update-readme.
+  2. Create the GitHub repo and push (copy ci.yml into .github\workflows first).
+  3. Record the 3-minute demo video (order in DEMO.md + pilot footage).
+  4. Deploy: Render (Dockerfile) + Neon PostgreSQL + Vercel (set FP_DEMO=1
+     for the hackathon demo).
+
+------------------------------------------------------------------------------
+10. KNOWN LIMITS (say them openly)
+------------------------------------------------------------------------------
+  - All model numbers are on synthetic data; real proof comes from the pilot.
+  - The full review queue is large (~45%) because the brief asked to catch
+    EVERY confirmed case; reviewers start with Review first (~6%).
+  - Honest candidates are most often flagged by "answer match".
+  - The partner who shares answers/code behaves honestly and is found only
+    through the match.
+  - The code runner does not cut the network; use a jail (isolate, nsjail,
+    Judge0) for a large public deployment. On Windows only time and output
+    limits apply.
+  - The Docker image has not been built yet.
+==============================================================================

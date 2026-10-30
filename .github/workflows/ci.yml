@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fp_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-java@v4          # the code runner's Java tests
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-node@v4          # the code runner's JavaScript tests
+        with:
+          node-version: "22"
+      - run: pip install -r requirements.txt
+      - name: Tests on SQLite
+        run: python -m unittest backend.tests.test_flow backend.tests.test_coding backend.tests.test_runner backend.tests.test_fairness backend.tests.test_pilot -v
+      - name: Tests on PostgreSQL
+        env:
+          FP_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/fp_test
+        run: python -m unittest backend.tests.test_flow backend.tests.test_coding backend.tests.test_fairness backend.tests.test_pilot -v
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --no-audit --no-fund
+      - run: npm run build                   # type-check + production build

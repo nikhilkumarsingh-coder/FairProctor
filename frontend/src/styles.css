@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/* dark mode follows a .dark class on <html> (set from the saved choice or the system setting) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Institutional slate theme ----------
+   One calm neutral ramp, one teal accent, status colours only where they mean something.
+   The Tailwind ramps the pages already use are re-pointed here, so every page follows the theme:
+   slate-* = the neutral greys, pink-* (the old accent) = the teal brand. */
+@theme {
+  --font-sans: "Inter", "Noto Sans Devanagari", "Nirmala UI", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --color-slate-50: #F9FAFB;  --color-slate-100: #F2F4F7; --color-slate-200: #E4E7EC; --color-slate-300: #D0D5DD;
+  --color-slate-400: #98A2B3; --color-slate-500: #667085; --color-slate-600: #475467; --color-slate-700: #344054;
+  --color-slate-800: #1D2939; --color-slate-900: #101828; --color-slate-950: #0C111D;
+
+  --color-pink-50: #ECF6F2;  --color-pink-100: #D3EBE2; --color-pink-200: #A8D7C6; --color-pink-300: #74BDA4;
+  --color-pink-400: #3F9E81; --color-pink-500: #1C8467; --color-pink-600: #0F6E56; --color-pink-700: #0B5A46;
+  --color-pink-800: #084838; --color-pink-900: #06382C; --color-pink-950: #03241C;
+
+  /* corners: square-ish, institutional */
+  --radius-lg: 0.375rem;   /* 6px  controls */
+  --radius-xl: 0.5rem;     /* 8px  cards, inputs */
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.625rem;
+
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-pop: fade-in 150ms ease-out;
+  --animate-pulse-ring: none;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* semantic tokens for new code: bg-brand, text-ink-2, border-line, bg-ok-soft ... */
+:root {
+  --fp-bg: #F2F4F7; --fp-surface: #FFFFFF; --fp-surface-2: #F9FAFB;
+  --fp-border: #E4E7EC; --fp-border-strong: #D0D5DD;
+  --fp-text: #1D2939; --fp-text-2: #475467; --fp-text-3: #667085;
+  --fp-brand: #0F6E56; --fp-brand-hover: #0B5A46; --fp-brand-soft: #ECF6F2; --fp-brand-ink: #084838;
+  --fp-success: #067647; --fp-success-soft: #ECFDF3;
+  --fp-warning: #B54708; --fp-warning-soft: #FFFAEB;
+  --fp-danger: #B42318;  --fp-danger-soft: #FEF3F2;
+  --fp-info: #175CD3;    --fp-info-soft: #EFF8FF;
+}
+.dark {
+  --fp-bg: #0C111D; --fp-surface: #101828; --fp-surface-2: #1D2939;
+  --fp-border: #1D2939; --fp-border-strong: #344054;
+  --fp-text: #F2F4F7; --fp-text-2: #D0D5DD; --fp-text-3: #98A2B3;
+  --fp-brand: #3F9E81; --fp-brand-hover: #74BDA4; --fp-brand-soft: #03241C; --fp-brand-ink: #A8D7C6;
+  --fp-success: #47CD89; --fp-success-soft: #0B2A1C;
+  --fp-warning: #F5B54A; --fp-warning-soft: #2B1E08;
+  --fp-danger: #F97066;  --fp-danger-soft: #2D1210;
+  --fp-info: #84ADFF;    --fp-info-soft: #0E1E3A;
+}
+@theme inline {
+  --color-page: var(--fp-bg); --color-surface: var(--fp-surface); --color-surface-2: var(--fp-surface-2);
+  --color-line: var(--fp-border); --color-line-strong: var(--fp-border-strong);
+  --color-ink: var(--fp-text); --color-ink-2: var(--fp-text-2); --color-ink-3: var(--fp-text-3);
+  --color-brand: var(--fp-brand); --color-brand-hover: var(--fp-brand-hover);
+  --color-brand-soft: var(--fp-brand-soft); --color-brand-ink: var(--fp-brand-ink);
+  --color-ok: var(--fp-success); --color-ok-soft: var(--fp-success-soft);
+  --color-warn: var(--fp-warning); --color-warn-soft: var(--fp-warning-soft);
+  --color-bad: var(--fp-danger); --color-bad-soft: var(--fp-danger-soft);
+  --color-info: var(--fp-info); --color-info-soft: var(--fp-info-soft);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  /* laptops and desktops: everything sized in rem gets ~6% more compact */
+  @media (min-width: 1024px) { html { font-size: 15px; } }
+  body {
+    @apply bg-page text-ink antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand; }
+  [lang="hi"] { line-height: 1.6; }
+}
+
+@layer utilities {
+  /* the old gradient helpers, now one solid accent */
+  .brand-bg { @apply bg-brand; }
+  .brand-text { @apply text-brand; }
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* code colours (highlight.js classes), light and dark */
+.hljs-theme { color: #1e293b; }
+.hljs-theme .hljs-keyword, .hljs-theme .hljs-built_in, .hljs-theme .hljs-type { color: #0B5A46; font-weight: 500; }
+.hljs-theme .hljs-string, .hljs-theme .hljs-char { color: #15803d; }
+.hljs-theme .hljs-number, .hljs-theme .hljs-literal { color: #c2410c; }
+.hljs-theme .hljs-comment { color: #64748b; font-style: italic; }
+.hljs-theme .hljs-title, .hljs-theme .hljs-title.function_ { color: #1d4ed8; }
+.hljs-theme .hljs-meta, .hljs-theme .hljs-meta .hljs-keyword { color: #7c3aed; }
+.dark .hljs-theme { color: #e2e8f0; }
+.dark .hljs-theme .hljs-keyword, .dark .hljs-theme .hljs-built_in, .dark .hljs-theme .hljs-type { color: #74BDA4; font-weight: 500; }
+.dark .hljs-theme .hljs-string, .dark .hljs-theme .hljs-char { color: #86efac; }
+.dark .hljs-theme .hljs-number, .dark .hljs-theme .hljs-literal { color: #fdba74; }
+.dark .hljs-theme .hljs-comment { color: #94a3b8; }
+.dark .hljs-theme .hljs-title, .dark .hljs-theme .hljs-title.function_ { color: #93c5fd; }
+.dark .hljs-theme .hljs-meta, .dark .hljs-theme .hljs-meta .hljs-keyword { color: #c4b5fd; }
+
+/* chart colours (fairness report): FairProctor in the accent blue, the old rules in a de-emphasis gray;
+   validated with the dataviz palette checker against white and slate-950 */
+.viz { --viz-ours: #2a78d6; --viz-old: #898781; --viz-grid: #e1e0d9; --viz-axis: #c3c2b7; }
+.dark .viz { --viz-ours: #3987e5; --viz-old: #898781; --viz-grid: #1D2939; --viz-axis: #344054; }

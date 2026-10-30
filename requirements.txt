@@ -1,0 +1,8 @@
+numpy>=1.26
+pandas>=2.1
+scikit-learn==1.9.1     # the shipped model (backend/model/model.pkl) was trained with this version
+fastapi>=0.115
+uvicorn>=0.29
+pydantic>=2.5
+psycopg[binary]>=3.1
+pyjwt>=2.8

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your test review</title>
+<style>
+:root{--paper:#FFFFFF;--sheet:#FCF4F4;--rose:#E9C3C6;--ink:#1E2A4A;--ink-2:#4A5675;--ink-3:#6E7790;--rule:#E6E2E6;--ok:#2F6B4F;--warn:#9A5A0C;--link:#1F5FA8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#151A26;--sheet:#1C2231;--rose:#5A3E46;--ink:#E9ECF4;--ink-2:#B9C0D2;--ink-3:#8F98AE;--rule:#2B3346;--ok:#7FC4A2;--warn:#E5A24B;--link:#7EB0EE}}
+:root[data-theme="dark"]{--paper:#151A26;--sheet:#1C2231;--rose:#5A3E46;--ink:#E9ECF4;--ink-2:#B9C0D2;--ink-3:#8F98AE;--rule:#2B3346;--ok:#7FC4A2;--warn:#E5A24B;--link:#7EB0EE}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Devanagari",sans-serif}
+main{max-width:620px;margin:0 auto;padding:20px 16px 48px}
+.lang{display:flex;justify-content:flex-end;gap:6px}
+.lang button{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:4px 12px;font:inherit;font-size:14px;color:inherit;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+h1{font-size:24px;line-height:1.25;margin:16px 0 8px}
+.status{border-left:4px solid var(--warn);padding:4px 0 4px 12px;margin:12px 0 20px;color:var(--ink-2)}
+.status.ok{border-color:var(--ok)}
+.pt{background:var(--sheet);border-radius:12px;padding:14px 16px;margin:12px 0}
+.pt b{display:block}
+.pt .when{color:var(--ink-3);font-size:15px}
+.note{color:var(--ink-2);font-size:15.5px}
+h2{font-size:19px;margin:28px 0 6px}
+textarea{width:100%;min-height:130px;font:inherit;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:inherit}
+label.chk{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:15.5px}
+label.chk input{width:20px;height:20px;margin-top:3px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:10px;background:var(--ink);color:var(--paper);font:inherit;font-weight:700;margin-top:12px;cursor:pointer}
+.done{color:var(--ok);margin-top:10px}
+.small{color:var(--ink-3);font-size:14px}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+  <div class="lang" role="group" aria-label="Language">
+    <button data-lang="en" aria-pressed="true">English</button>
+    <button data-lang="hi" aria-pressed="false">हिन्दी</button>
+  </div>
+  <h1 id="title"></h1>
+  <div id="status" class="status" role="status"></div>
+  <div id="points"></div>
+  <p id="notcounted" class="note"></p>
+  <section id="appeal" hidden>
+    <h2 id="a-title"></h2>
+    <p id="a-help" class="note"></p>
+    <div id="a-moments"></div>
+    <textarea id="a-text" aria-labelledby="a-title"></textarea>
+    <button class="btn" id="a-send"></button>
+    <p class="done" id="a-done" role="status"></p>
+  </section>
+  <p class="small" id="privacy"></p>
+</main>
+<script>
+const T = {
+  en:{title:'About your test', clear:'Your test was checked automatically. Nothing needs a human check. You do not need to do anything.',
+      flagged:'Your test will be checked by a person. This is not a decision and not an accusation. Below is what the system noticed and when, so you can explain.',
+      notcounted:'A dim room, a slow connection, someone walking past, or holding your phone low were not counted against you.',
+      at:'At', q:'Questions', a_title:'Explain what happened', a_help:'Tick the moments you want to explain, then write what was happening. For example: a power cut, a call you had to take, or how you worked out an answer.',
+      send:'Send my explanation', sent:'Sent. The reviewer will read this together with your test record.', err:'Could not send. Check your connection and press the button again.',
+      privacy:d=>`Your test record is used only to check this test. It is deleted ${d} days after the result, or earlier if you ask. No one infers your gender, religion, caste or region from it.`,
+      fam:{}},
+  hi:{title:'आपकी परीक्षा के बारे में', clear:'आपकी परीक्षा की स्वचालित जाँच हो गई है। किसी व्यक्ति द्वारा जाँच की ज़रूरत नहीं है। आपको कुछ नहीं करना है।',
+      flagged:'आपकी परीक्षा को एक व्यक्ति जाँचेगा। यह कोई फ़ैसला या आरोप नहीं है। नीचे लिखा है कि सिस्टम ने क्या देखा और कब, ताकि आप अपनी बात बता सकें।',
+      notcounted:'कम रोशनी, धीमा इंटरनेट, पीछे से किसी का गुज़रना, या फ़ोन नीचे पकड़ना — इनमें से कुछ भी आपके ख़िलाफ़ नहीं गिना गया।',
+      at:'समय', q:'प्रश्न', a_title:'बताइए क्या हुआ था', a_help:'जिन पलों के बारे में बताना है उन पर निशान लगाइए, फिर लिखिए उस समय क्या हो रहा था। जैसे: बिजली चली गई, कोई ज़रूरी कॉल आया, या आपने उत्तर कैसे निकाला।',
+      send:'मेरी बात भेजें', sent:'भेज दिया गया। समीक्षक इसे आपके परीक्षा रिकॉर्ड के साथ पढ़ेंगे।', err:'भेजा नहीं जा सका। इंटरनेट जाँचिए और बटन फिर से दबाइए।',
+      privacy:d=>`आपका परीक्षा रिकॉर्ड केवल इस परीक्षा की जाँच के लिए उपयोग होता है। परिणाम के ${d} दिन बाद, या आपके कहने पर पहले, इसे मिटा दिया जाता है। इससे आपका लिंग, धर्म, जाति या क्षेत्र नहीं निकाला जाता।`,
+      fam:{'How quickly some answers were given':'कुछ उत्तर सामान्य से बहुत जल्दी दिए गए।',
+           'Long pauses with no activity before correct answers':'कुछ कठिन प्रश्नों पर स्क्रीन पर लंबे समय तक कोई गतिविधि नहीं थी, फिर सही उत्तर दिया गया।',
+           'Leaving the test screen':'आप परीक्षा की स्क्रीन से बाहर गए और लौटने के तुरंत बाद सही उत्तर दिया।',
+           'Pasted text':'उत्तर में टेक्स्ट टाइप करने की जगह पेस्ट किया गया।',
+           "Answers similar to another candidate's":'आपके कई उत्तर (गलत उत्तर भी) उसी समय परीक्षा दे रहे किसी अन्य उम्मीदवार से मेल खाते हैं।',
+           'Another person visible':'कुछ समय तक कैमरे में आपके पास कोई दूसरा व्यक्ति दिखाई दिया।'}}
+};
+let lang = 'en', data = null;
+const sid = location.pathname.split('/').pop();
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(){
+  const t = T[lang], c = data.candidate, flagged = data.status !== 'clear';
+  document.documentElement.lang = lang;
+  document.getElementById('title').textContent = t.title;
+  const st = document.getElementById('status');
+  st.textContent = flagged ? t.flagged : t.clear; st.className = 'status' + (flagged ? '' : ' ok');
+  document.getElementById('points').innerHTML = (c.points || []).map((p, i) => `
+    <div class="pt"><b>${esc(lang === 'hi' ? (t.fam[p.title] || p.text) : p.text)}</b>
+      <span class="when">${p.when ? `${t.at} ${p.when}` : ''}${p.questions && p.questions.length ? ` · ${t.q} ${p.questions.join(', ')}` : ''}</span></div>`).join('');
+  document.getElementById('notcounted').textContent = flagged ? t.notcounted : '';
+  const ap = document.getElementById('appeal'); ap.hidden = !c.can_appeal;
+  document.getElementById('a-title').textContent = t.a_title;
+  document.getElementById('a-help').textContent = t.a_help;
+  document.getElementById('a-moments').innerHTML = (c.points || []).filter(p => p.when).map((p, i) => `
+    <label class="chk"><input type="checkbox" value="${i}"> <span>${esc(p.when)} — ${esc(lang === 'hi' ? (t.fam[p.title] || p.title) : p.title)}</span></label>`).join('');
+  document.getElementById('a-send').textContent = t.send;
+  document.getElementById('privacy').textContent = t.privacy(data.retention_days);
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+}
+
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => { lang = b.dataset.lang; render(); }));
+document.getElementById('a-send').addEventListener('click', async () => {
+  const moments = [...document.querySelectorAll('#a-moments input:checked')].map(i => data.candidate.points[+i.value].when);
+  const out = document.getElementById('a-done');
+  try {
+    const r = await fetch(`/api/appeal/${sid}`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text: document.getElementById('a-text').value, moments})});
+    out.textContent = r.ok ? T[lang].sent : T[lang].err;
+  } catch { out.textContent = T[lang].err; }
+});
+(async () => {
+  if ((navigator.language || '').startsWith('hi')) lang = 'hi';
+  const r = await fetch(`/api/session/${sid}/candidate`);
+  if (!r.ok){ document.getElementById('title').textContent = 'Test record not found. Check the link in your message.'; return; }
+  data = await r.json(); render();
+})();
+</script>
+</body>
+</html>

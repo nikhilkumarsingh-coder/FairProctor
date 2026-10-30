@@ -1,0 +1,14 @@
+video,start,end,label
+cs_video,11,14,? eyes down (reading something below the camera?)
+cs_video,23,31,? eyes down (reading something below the camera?)
+cs_video,33,36,? person walks right behind the candidate
+cs_video,39,52,? lights turned off / lamp on
+cs_video,55,59,? eyes down
+cs_video,60,62,? hand over mouth while a person is behind
+cs_video,64,69,? person at the locker behind; candidate leans to the camera
+cs_video,70,81,? eyes down
+cs_video,87,91,? eyes down
+cs_video,93,98,? person behind on the left / walks past
+cs_video,100,104,? lights off / lamp on
+cs_video,109,113,? leans back, looks off to the side
+cs_video,117,121,? lights off; object (phone?) in hand at 119 s

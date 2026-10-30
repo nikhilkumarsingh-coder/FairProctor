@@ -1,0 +1,11 @@
+session_id,window_id,device,bandwidth_class,precheck_light,precheck_framing,is_synthetic,role,kind,partner
+PILOT1-P01,4,desktop,normal,ok,ok,0,cheat_search,cheat,
+PILOT1-P02,4,desktop,normal,ok,ok,0,honest_quiet,honest,
+PILOT1-P03,4,desktop,normal,backlit,ok,0,cheat_phone,cheat,
+PILOT1-P04,4,desktop,low,ok,ok,0,honest_interrupted,honest,
+PILOT1-P05,4,desktop,normal,ok,ok,0,cheat_pair,cheat,PILOT1-P06
+PILOT1-P06,4,phone,normal,ok,ok,0,cheat_pair,cheat,PILOT1-P05
+PILOT1-P07,4,phone,normal,ok,ok,0,honest_slow,honest,
+PILOT1-P08,4,phone,low,ok,ok,0,honest_dim,honest,
+PILOT1-P09,4,phone,normal,ok,ok,0,honest_phone_low,honest,
+PILOT1-P10,4,phone,normal,ok,ok,0,honest_shared,honest,

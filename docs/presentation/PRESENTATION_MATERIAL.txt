@@ -1,0 +1,530 @@
+==============================================================================
+ FAIRPROCTOR — PRESENTATION MATERIAL (paste into a slide generator)
+ Deviathon 2.0 · Organisation: Integraminds · Theme: MISSION BHARAT · Track: Software
+ Problem statement: "Proctoring that does not punish a shared room"
+==============================================================================
+
+HOW TO USE THIS FILE
+  - PART A: the Round 1 deck, slide by slide (7 slides, fits "5–7 slides").
+    Each slide has: title, on-slide text (short), visual suggestion, and
+    speaker notes (what to say). Total talk time ~5 minutes.
+  - PART B: the concept document (paste as the written submission).
+  - PART C: Round 1 checklist → where each item is answered.
+  - PART D: Round 1 marking criteria → how the deck scores on each.
+  - PART E: Q&A preparation (3-minute Q&A).
+  - PART F: Round 2 (6-min demo + 4-min technical inspection) plan.
+  - PART G: Round 3 (7-min final + 5-min jury Q&A) plan.
+  - PART H: numbers you can quote (one place, all checked).
+  Fill the [brackets] yourself (team name, ID, members, contacts).
+
+Rule for every number: all model numbers are OUT-OF-FOLD on SYNTHETIC data
+(the 5,000-session labelled sample was simulated because the real IMAP data was
+not available). Say "synthetic" once on the results slide. Real-pilot numbers go
+in only after the pilot (pilot\out\hostel-pilot → reports/PILOT_RESULTS.md).
+
+
+##############################################################################
+ PART A — ROUND 1 DECK (7 slides, ~5 minutes)
+##############################################################################
+
+------------------------------------------------------------------------------
+SLIDE 1 — Title + team  (15 s)
+------------------------------------------------------------------------------
+Title:    FairProctor
+Subtitle: Proctoring that does not punish a shared room
+Line:     Separate the environment from the behaviour. Rank what reviewers
+          see. Explain every flag. Help candidates fix the camera first.
+Footer:   PS: Proctoring that does not punish a shared room · Integraminds ·
+          Mission Bharat · Software
+          Team: [Team name] · Team ID: [ID]
+          Members: [Name 1 – role], [Name 2 – role], [Name 3 – role], [Name 4 – role]
+          Contact: [email] · [phone]
+Visual:   Logo/wordmark; a small split image idea: left "dim shared room on a
+          phone, 2G" → right "cleared, with reasons"; second phone → "flagged
+          with evidence".
+Speaker notes:
+  "We are [team]. Our problem is proctoring that punishes candidates for their
+  room instead of their behaviour. FairProctor fixes that: it separates the
+  environment from what the candidate actually does, ranks the review queue,
+  explains every flag, and helps candidates fix their camera before the test."
+
+------------------------------------------------------------------------------
+SLIDE 2 — The problem and who it hurts  (45 s)
+------------------------------------------------------------------------------
+Title: Today's rules flag the room, not the cheating
+On-slide:
+  - Rules tuned for one person, a bright room and broadband: two faces,
+    looking away, face not visible, tab switch, paste.
+  - Real candidates: shared homes (a sibling walks past), cyber cafes, a phone
+    held at an angle, 2G video at one frame every few seconds.
+  - One test can raise hundreds of flags — mostly noise.
+  Who it hurts:
+  - Candidates from small towns and rural areas: rejected for their room,
+    never told why, cannot appeal with evidence.
+  - Reviewers: cannot watch every flagged session → honest people rejected,
+    real malpractice passes.
+  - Companies and universities: results they cannot trust.
+  - The most common real method — a second phone below the camera — is
+    invisible to face rules.
+  Constraints: CPU-only scoring · DPDP Act (consent, purpose limitation,
+  deletion) · no face recognition beyond own-ID match · no inference of
+  gender, religion, caste or region · works on 2G phones.
+Visual: three persona cards (Candidate / Reviewer / Institution) with one pain
+  each; a tiny "flag counter" showing hundreds of flags for an honest session.
+Speaker notes:
+  "In our own test videos in shared rooms — walk-pasts, looking down at a
+  phone, a dim room — a flag-everything proctor raised 120 to 390 alerts an
+  hour. None of it was cheating. Meanwhile the real method, a second phone
+  under the camera, raises nothing. So reviewers drown, honest candidates from
+  low-resource settings pay, and cheaters pass."
+
+------------------------------------------------------------------------------
+SLIDE 3 — Existing solutions and the gap  (35 s)
+------------------------------------------------------------------------------
+Title: What exists, and what is missing
+On-slide (table):
+  | Approach                         | Problem                                    |
+  |----------------------------------|--------------------------------------------|
+  | Rule-based webcam flags          | Every frame is a flag; dim rooms, phones   |
+  |                                  | and 2G produce the most flags              |
+  | Face/gaze deep models            | Trained on lab video; need clear frames;   |
+  |                                  | GPU; at 2G an eye is ~9 px wide            |
+  | Live human proctoring            | Expensive, does not scale                  |
+  | Plagiarism tools for code        | Only similarity, no behaviour, no context  |
+  The gap:
+  - Nobody separates ENVIRONMENT from BEHAVIOUR.
+  - Camera-free signals (timing, focus, paste, shared wrong answers) are
+    under-used.
+  - Flags arrive without evidence; candidates cannot answer back.
+  - Nothing helps the candidate fix the camera before the test.
+Visual: 2×2 grid: x = "uses camera-free signals", y = "explains with evidence";
+  existing approaches bottom-left, FairProctor top-right.
+Speaker notes:
+  "We tested design choices on public data. A model trained on lab frames
+  called honest head-down behaviour cheating with near certainty. On the
+  Cheating Scenario Dataset at 2G resolution an eye is about 9 pixels wide, so
+  gaze is useless. That told us: the camera is a weak signal; behaviour over
+  time is the strong one."
+
+------------------------------------------------------------------------------
+SLIDE 4 — Our solution and key differentiators  (60 s)
+------------------------------------------------------------------------------
+Title: FairProctor: environment is context, behaviour is evidence
+On-slide:
+  1. Environment-neutral score — brightness, blur, frame rate, face visibility
+     only change how much video is TRUSTED; they can never add suspicion.
+     Missing video = no evidence, not suspicion. Bandwidth and device are not
+     model inputs at all.
+  2. Camera-free signals carry the weight — silent pauses then correct answers
+     (second phone), answer timing and person-fit, rare WRONG answers shared
+     across candidates (rings), leaving the window, paste size (never the text).
+  3. Ranked queue with evidence — "Review first" band; every flag links to the
+     moments that caused it ("Q14–Q22: 6 answers in a row in under 4 s, each
+     correct, matching 3 other candidates' wrong options").
+  4. Candidates see what was noticed AND what was not counted, in English or
+     Hindi, and can appeal against specific moments.
+  5. Phone pre-check: light, backlight, framing, sharpness, people in view,
+     connection — fixes in plain language before the clock starts.
+  6. Coding tests too: MOSS-style code similarity, paste and typing patterns.
+  7. Fairness report per sitting: who gets flagged, by room/connection/device.
+Expected outcome:
+  - Reviewers start where the malpractice is: ~6% of sessions hold ~91% of cases.
+  - Honest low-bandwidth candidates are not singled out (gap +3 points vs +44
+    points with the old rules).
+Visual: left "old: 300 flags, no reason" → right "FairProctor: score 97,
+  Review first, 11 silent pauses on hard questions (00:10–23:52), head down 76%
+  vs 5%". Screenshot: docs/screenshots/61-rahul-evidence.jpg.
+Speaker notes:
+  "Two candidates from our demo. Priya: honest, 2G, phone held low, dim shared
+  room. Old rules rank her ninth of 202. FairProctor clears her and lists five
+  things it did not count. Rahul: second phone under the camera. Old rules rank
+  him around eightieth. FairProctor puts him sixth, in Review first, with the
+  evidence: 11 long silent pauses on hard questions, each followed by a correct
+  answer, head down 76% of the time in those pauses versus 5% otherwise."
+
+------------------------------------------------------------------------------
+SLIDE 5 — Architecture, workflow and algorithm  (50 s)
+------------------------------------------------------------------------------
+Title: How it works
+Diagram (draw as boxes and arrows):
+
+  CANDIDATE PHONE / LAPTOP (browser, React)
+    ├─ Pre-check (on device): light, backlight, face, sharpness, speed test
+    ├─ Test screen: answers, timing, focus, paste LENGTH, idle pauses
+    ├─ On-device face detector → NUMBERS only every ~5 s
+    │    (faces, face visible, head direction, brightness) — no images leave
+    └─ Offline-safe queue (IndexedDB), resend on 2G, idempotent by sequence no.
+            │  HTTPS, JWT
+            ▼
+  FASTAPI BACKEND (CPU)
+    ├─ Event store (PostgreSQL)
+    ├─ Live monitor: model re-scores answers so far every 45 s → alerts
+    ├─ Close & score job (whole sitting at once — needed for shared answers)
+    │    1. Features + evidence per session (episodes, not frames)
+    │    2. Cross-candidate answer matching (rarity-weighted, both sides, rings)
+    │    3. Gradient-boosted trees (monotonic) → calibrated probability
+    │    4. Environment adjustment: score − (environment-only effect)
+    │    5. Explanations: contribution per family + time-stamped moments
+    │    6. Bands: Review first (≥90% precision) / Review / Cleared
+    ├─ Coding: sandboxed runner (Python, C++, Java, JS) + similarity + typing
+    └─ Fairness report, audit log, deletion jobs
+            ▼
+  REVIEWER CONSOLE → ranked queue, timeline, moments, decision, appeals
+  CANDIDATE RESULT → what was noticed, what was not counted, appeal
+
+Algorithm in one line:
+  score = f(behaviour, environment) − [f(honest, environment) − f(honest, typical environment)]
+Visual: the box diagram above; small inset of the formula.
+Speaker notes:
+  "Everything heavy happens on the server on CPU; the phone sends only numbers.
+  Collusion needs the whole sitting, so final scoring runs at close; a live
+  monitor runs the same model on partial answers every 45 seconds. The key
+  trick is the environment adjustment: we subtract what the environment alone
+  would produce for an ordinary candidate, so a dark room can lower trust in
+  video but can never raise the score."
+
+------------------------------------------------------------------------------
+SLIDE 6 — Technology stack, feasibility and risks  (45 s)
+------------------------------------------------------------------------------
+Title: Built to run on CPU, on 2G, under DPDP
+Stack (with why):
+  - React 19 + TypeScript + Tailwind (Vite): phone-first, offline queue,
+    Hindi/English, light & dark.
+  - FastAPI (Python): same language as the ML; typed request validation.
+  - PostgreSQL (SQLite locally): reliable, free tiers (Neon/Render).
+  - scikit-learn HistGradientBoosting: trains in ~10 s, scores in 0.04 ms per
+    session on CPU; monotonic constraints; isotonic calibration.
+  - On-device face detection (browser FaceDetector / MediaPipe on fast links):
+    no images uploaded.
+  - JWT + scrypt-hashed passwords and codes; roles: candidate, reviewer, admin.
+  - Docker + GitHub Actions CI; deploy on Render + Neon + Vercel.
+Feasibility (already built and tested):
+  - Working web app, 37 backend tests passing on SQLite and PostgreSQL,
+    6 browser test suites.
+Risks → mitigation:
+  | Risk                                   | Mitigation                                   |
+  |----------------------------------------|----------------------------------------------|
+  | Trained on synthetic data              | Real pilot kit (roles, sealed key); retrain  |
+  |                                        | on IMAP data — every number regenerates      |
+  | Honest people with similar answers     | Rarity weighting, both-side check, human     |
+  | flagged by "answer match"              | review; candidate can appeal with moments    |
+  | Copying with no timing trace           | Shown as a known limit; reviewer evidence    |
+  | 2G drops data                          | Offline queue, resend, idempotent storage    |
+  | Privacy / DPDP                         | Consent, numbers not images, retention       |
+  |                                        | deletion, no sensitive inference             |
+  | Code runner abuse                      | Limits + unprivileged user; jail for scale   |
+Speaker notes:
+  "Models run on CPU as required. The biggest risk is that our numbers come
+  from simulated data. We built a pilot kit to test real people with secret
+  role cards and a sealed key, and the pipeline retrains on the real IMAP data
+  the moment it is mapped."
+
+------------------------------------------------------------------------------
+SLIDE 7 — Results against "Done when", plan and milestones  (50 s)
+------------------------------------------------------------------------------
+Title: Done when — and what's next
+Table (all out-of-fold, synthetic labelled sample of 5,000 sessions):
+  | Done when                                   | Result                                   |
+  |---------------------------------------------|------------------------------------------|
+  | Cut the review queue by ≥ half, surfacing   | All 294 confirmed cases in the top 44.9% |
+  | every confirmed case                        | → 55% cut (old rules flag 100%)          |
+  | Every flag links to its moments             | 100% of queued sessions have moments     |
+  | Usable at one frame every 5 s               | AUC 0.9915 vs 0.9918 full video;         |
+  |                                             | recall still 100%                        |
+  | Pre-check on a phone, plain language        | Built; English + Hindi; 390 px tested    |
+  | False-flag rate by bandwidth                | Honest low 48.4% / normal 45.3%          |
+  |                                             | (old rules 76.4% / 32.6%)                |
+  Top of the queue (judged most): precision of first 100 = 95% (old rules 47%);
+  Review first = 6% of sessions, 91.5% of cases, 90% precision.
+Milestones:
+  [done] Engine + evaluation · [done] Web app (backend, frontend, roles) ·
+  [done] Live monitor · [done] Coding tests · [done] Fairness report ·
+  [next] Real pilot (10–20 people) · [next] Deploy + demo video ·
+  [later] Map real IMAP schema and retrain; per-client thresholds.
+Visual: the chart docs/charts/review-curve.svg (share reviewed vs malpractice
+  caught; Review first point at 6% → 91%).
+Speaker notes:
+  "Every Done-when item is met on the labelled sample. The queue line is set to
+  catch every confirmed case, which the brief asked for — that's 45% of
+  sessions — but reviewers start with Review first: 6% of sessions holding 91%
+  of the cases. Next: our real pilot, deployment and the demo. Thank you."
+
+
+##############################################################################
+ PART B — CONCEPT DOCUMENT (written submission, ~2 pages)
+##############################################################################
+
+FairProctor — Concept Document
+Team: [Team name] · Team ID: [ID] · Members: [names] · Contact: [email, phone]
+Problem statement: Proctoring that does not punish a shared room
+(Integraminds · Mission Bharat · Software)
+
+1. Problem interpretation
+Remote assessments flag possible malpractice from webcam and browser rules
+designed for a single candidate in a bright room on broadband. Candidates in
+shared homes, cyber cafes, on phones and on 2G produce hundreds of flags that
+are mostly noise, while the most common real method — a second phone below the
+camera — produces none. We interpret the task as: build an integrity score that
+treats the environment as context and only behaviour as evidence; combine weak
+video with camera-free signals; rank the review queue by likelihood of real
+malpractice with time-stamped evidence; explain the result to the candidate;
+and reduce flags at the source with a phone pre-check.
+
+2. Users, pain points, use cases, constraints
+Users: candidates from small towns and rural areas; assessment reviewers;
+companies and universities using the results.
+Pain points: honest candidates rejected for their room; no reasons, no appeal;
+reviewers overloaded; second phones undetected.
+Use cases: (a) a candidate checks light and framing on a phone, then takes the
+test on 2G; (b) a reviewer opens the ranked queue and confirms or clears with
+evidence; (c) a candidate reads what was noticed and appeals against specific
+moments; (d) an admin watches a live sitting, closes and scores it, and reads
+the fairness report; (e) coding tests with code similarity and typing patterns.
+Constraints: CPU at scoring time; DPDP Act (consent, purpose limitation,
+deletion after retention); no face recognition beyond own-ID match; no
+inference of gender, religion, caste or region; low bandwidth.
+
+3. Existing solutions and the gap
+Rule-based webcam proctoring counts frames as flags and punishes poor
+environments. Deep face/gaze models need clear video and GPUs and fail at 2G
+resolution (an eye is ~9 px). Live human proctoring does not scale. Code
+plagiarism tools see only similarity. Gap: no separation of environment and
+behaviour, little use of camera-free signals, no evidence or appeal, no
+pre-check.
+
+4. Proposed solution and differentiators
+- Environment-neutral scoring: video quality only modulates trust; missing
+  video is not evidence; bandwidth and device are excluded from the model.
+- Camera-free signals: silent pauses followed by correct answers, timing and
+  person-fit, rarity-weighted shared wrong answers and rings, focus loss before
+  correct answers, paste size.
+- Flags become episodes (a walk-past is one short appearance, ignored unless it
+  lasts 25 s+ while answering).
+- Ranked queue with bands (Review first ≥ 90% precision) and time-stamped
+  evidence with jump-to moments.
+- Candidate-facing explanation in English/Hindi: what was noticed, what was not
+  counted, appeal.
+- Phone pre-check with plain-language fixes; no image leaves the phone.
+- Live monitor during the test; fairness report per sitting.
+- Coding tests: sandboxed judge on hidden tests, MOSS-style similarity, paste
+  and typing patterns, own trained model.
+Expected outcome: reviewers see real malpractice first; honest candidates in
+poor environments are not singled out; every decision is explainable.
+
+5. Architecture and workflow
+Browser (React): pre-check → consent → test; records answers, timing, focus,
+idle, paste length, and on-device camera numbers every ~5 s; offline-safe queue.
+Backend (FastAPI, PostgreSQL): idempotent event store; live re-scoring every
+45 s; close-and-score job per sitting (features → cross-candidate matching →
+gradient-boosted trees with monotonic constraints → calibration → environment
+adjustment → explanations → bands); reviewer and candidate views; audit,
+retention and deletion. Formula: score = f(behaviour, env) − [f(honest, env) −
+f(honest, typical env)].
+
+6. Technology stack and justification
+React 19/TypeScript/Tailwind (phone-first, offline, bilingual); FastAPI (Python
+end to end with ML); PostgreSQL; scikit-learn gradient boosting (CPU, ~10 s
+training, 0.04 ms/session scoring, monotonic + calibrated); on-device face
+detection (privacy, bandwidth); JWT + scrypt; Docker, GitHub Actions; Render,
+Neon, Vercel.
+
+7. Feasibility, risks and mitigation
+Built and tested: full web app, 37 backend tests on SQLite and PostgreSQL,
+6 browser suites. Risks: synthetic training data (mitigation: real pilot kit,
+retrain on IMAP data); honest answer matches (rarity weighting, human review,
+appeals); copying with no timing trace (known limit); 2G loss (offline queue);
+privacy (consent, numbers only, deletion); code runner abuse (limits, jail for
+scale).
+
+8. Results on the labelled sample (out of fold, synthetic)
+All 294 confirmed cases within the top 44.9% of sessions (55% queue cut; old
+rules flag every session). Review first: 6.0% of sessions, 91.5% of cases,
+90.3% precision. Precision of the first 100: 95% (old rules 47%). AUC 0.9918;
+0.9915 at one frame every 5 s with recall still 100%. Honest false-flag rate:
+low bandwidth 48.4%, normal 45.3% (old rules 76.4% vs 32.6%). 100% of queued
+sessions have time-stamped moments. Coding model: AUC 0.989; 95% of
+malpractice caught reviewing 8.9% of candidates; 3.7% honest flagged vs 79%
+for a simple paste/tab rule.
+
+9. Implementation plan and milestones
+Done: engine and evaluation; checks on public datasets; web backend and
+frontend with roles; live monitor; coding tests; fairness report; demo story;
+Docker and CI; pilot kit. Next: real pilot with 10–20 people; deployment;
+demo video. Later: map the IMAP schema and retrain; per-client thresholds;
+cross-sitting ring detection; caching for live scoring.
+
+10. Privacy (DPDP)
+Consent screen; purpose limitation; numbers instead of images; paste length
+not text; no sensitive inference; bandwidth/device excluded from the model;
+deletion after the retention window (default 90 days) and on request; audit log.
+
+
+##############################################################################
+ PART C — ROUND 1 CHECKLIST → WHERE IT IS ANSWERED
+##############################################################################
+  [ ] Team name, ID, members, contacts ........ Slide 1, Concept doc header
+  [ ] PS number/title + interpretation ........ Slide 1–2, Doc §1
+  [ ] Target users, pain points, use cases,
+      constraints ............................. Slide 2, Doc §2
+  [ ] Existing solutions + gap ................ Slide 3, Doc §3
+  [ ] Solution, differentiator, outcome ....... Slide 4, Doc §4
+  [ ] Architecture / workflow / flowchart ..... Slide 5, Doc §5
+  [ ] Tech stack + justification .............. Slide 6, Doc §6
+  [ ] Feasibility, risks, mitigation .......... Slide 6, Doc §7
+  [ ] Implementation plan + milestones ........ Slide 7, Doc §9
+  [ ] 5–7 slides + concept document ........... 7 slides (Part A) + Part B
+
+
+##############################################################################
+ PART D — ROUND 1 CRITERIA (100) → HOW WE SCORE
+##############################################################################
+  Problem understanding & PS alignment (25): every "Done when" item answered
+    with a number; second-phone case addressed directly; guardrails respected
+    (CPU, DPDP, no sensitive inference).
+  Innovation & originality (20): environment-neutral adjustment; missing video
+    = no evidence; rarity-weighted shared WRONG answers; "not counted" list for
+    candidates; fairness report vs old rules at the same workload.
+  Solution approach & architecture (20): clear pipeline, live + close scoring,
+    explanations with moments, bands.
+  Technical feasibility (15): it is already built; tests; CPU timings.
+  User needs & impact (10): rural candidates, reviewers, institutions; Hindi;
+    phone pre-check; appeal.
+  Research & preparation (10): public dataset checks (Mendeley camera dataset,
+    Cheating Scenario Dataset, EdNet-KT1, ESC-50, MUSAN, own videos).
+
+
+##############################################################################
+ PART E — Q&A PREPARATION
+##############################################################################
+Q: Your data is synthetic. Why trust the numbers?
+A: The real data wasn't available, so we simulated its shape (35% low
+   bandwidth, 50% shared homes/cafes, phones held low, four malpractice
+   patterns). It proves the pipeline and design choices; not exact numbers.
+   We checked choices on public datasets, built a pilot kit for real people,
+   and every number regenerates on the IMAP data.
+
+Q: Why is the queue 45% of sessions?
+A: The brief asks to surface EVERY confirmed case; the last few cases cost most
+   of the queue. That is why we split it: Review first is 6% of sessions with
+   91.5% of cases at 90% precision. Top-of-queue precision is what we optimise.
+
+Q: How do you catch a second phone if the camera can't see it?
+A: Behaviour: long silent pauses with no touch or key input on hard questions,
+   no window change, then a correct answer; head-down rate in those pauses
+   compared with the candidate's OWN baseline.
+
+Q: Won't honest people who think silently be flagged?
+A: One pause is normal; the pattern needs repeated pauses on hard items
+   followed by correct answers, compared with the candidate's own pace, and a
+   human reviewer decides. The candidate sees the moments and can explain.
+
+Q: Doesn't using bandwidth/device make it unfair?
+A: We don't use them as model inputs at all; they're recorded only for the
+   fairness report. Video quality only changes how much video is trusted.
+
+Q: What about face recognition and privacy?
+A: No face recognition; face DETECTION only (count, visible, head direction)
+   on the device; only numbers are sent; DPDP consent, retention and deletion.
+
+Q: How does collusion detection work?
+A: Shared answers weighted by rarity (a shared rare wrong answer counts a lot),
+   same option within 20 s, strength measured from both candidates' side,
+   mutual matches grouped into rings.
+
+Q: Does it run on CPU?
+A: Yes: training ~10 s, scoring 0.04 ms per session; the slow part is comparing
+   answers across the sitting (~2 s per live session), which we can cache.
+
+Q: What happens at 1 frame every 5 s?
+A: AUC 0.9915 vs 0.9918 at full video; every confirmed case still above the
+   line; rank correlation 0.934.
+
+Q: Can it be gamed?
+A: Monotonic model (more evidence never lowers the score); behaviour signals
+   are hard to fake while answering correctly; humans make the final decision.
+   Known limit: slow copying of correct answers long after the source.
+
+Q: How is this different from plagiarism tools for coding?
+A: Similarity plus behaviour: paste share, untyped characters, no corrections,
+   bursts after idle, unusually fast accepts; a simple paste/tab rule flags 79%
+   of honest coders, ours 3.7%.
+
+
+##############################################################################
+ PART F — ROUND 2: PROTOTYPE & TECHNICAL VALIDATION
+ (6-min demo + 4-min technical inspection + 3-min Q&A)
+##############################################################################
+6-minute demo order (use the "Try the demo" buttons; details in DEMO.md):
+  0:00 Login page, phone view: pre-check (light, framing, plain-language fixes).
+  0:45 Reviewer → queue → tick "Hide reference sessions": Rahul, Review first
+       97 → evidence: 11 silent pauses, moments on the timeline.
+  1:45 Priya (Auto-cleared): "Not counted" — 2G video, dim room, walk-pasts,
+       phone held low. Old rules would put her in the top 10.
+  2:30 Admin → Morning sitting → Fairness report: phone +86 pts (old rules) vs
+       no clear difference; Review first: 0% honest in every group.
+  3:30 Live: a new candidate on a phone, leaves the tab → calm notice; admin's
+       live monitor shows the alert.
+  4:30 Candidate result for Rahul: what was noticed + "Explain this" (appeal).
+  5:15 Coding: paste case → Review first, side-by-side code view.
+  5:45 Close with the pilot result (after the real pilot).
+4-minute technical inspection — have ready:
+  - Code tour: backend/services (scoring, live, fairness, runner), fairproctor/
+    (features, model, explain, coding), frontend/src/pages.
+  - Tests: python -m unittest backend.tests.test_flow backend.tests.test_coding
+    backend.tests.test_runner backend.tests.test_fairness backend.tests.test_pilot
+    (37 tests, SQLite and PostgreSQL); Playwright suites in e2e/.
+  - Data flow: event schema with sequence numbers, idempotent ingest.
+  - Model card: features, monotonic constraints, calibration, grouped CV.
+  - Security: JWT + token_version, scrypt, roles, runner limits, privacy.
+  - API docs at /docs (Swagger).
+Team ownership: each member explains one part (ML, backend, frontend, pilot).
+
+
+##############################################################################
+ PART G — ROUND 3: GRAND FINALE (7-min presentation/demo + 5-min jury Q&A)
+##############################################################################
+Story arc (7 min):
+  1 min  Problem + Priya/Rahul hook.
+  2 min  Live demo: Rahul's evidence, Priya's "not counted", fairness report.
+  1.5 min Real pilot: N people, roles, sealed key → results with intervals,
+         what it got right, what it got wrong (honestly).
+  1.5 min Impact: rural candidates, reviewers' time (6% → 91%), institutions'
+         trust; DPDP by design; CPU cost.
+  1 min  Roadmap: IMAP data, per-client thresholds, cross-sitting rings, scale.
+Impact lines:
+  - "Reviewers look at 6 of every 100 sessions first and find 91 of every 100
+    real cases there."
+  - "An honest candidate on 2G is treated like one on broadband: +3 points,
+    not +44."
+  - "Every flag comes with the moment that caused it, and every candidate can
+    answer back."
+
+
+##############################################################################
+ PART H — NUMBERS YOU CAN QUOTE (checked)
+##############################################################################
+Question-test model (5,000 synthetic sessions, 294 confirmed, out of fold):
+  AUC 0.9918 · average precision 0.9036
+  Review first: 298 sessions = 6.0%, 91.5% of cases, precision 90.3%
+  Top 10% of sessions → 97% of cases
+  All confirmed cases within top 44.9% → 55.1% queue cut (old rules: 100%)
+  Stricter holdout: 45.3% queued, 293 of 294 caught
+  Precision first 25/50/100/200: 88% / 94% / 95% / 94.5% (old: 80/64/47/35%)
+  1 frame / 5 s: AUC 0.9915, recall 100%, rank correlation 0.934
+  Honest flagged: low bandwidth 48.4%, normal 45.3% (old rules 76.4%, 32.6%)
+  Phone 46.4% = desktop 46.4%
+  Training 10.5 s on 2 cores; scoring 0.036 ms/session; live ~2 s/session
+  100% of queued sessions have moments and written reasons
+Coding model (5,125 synthetic candidates, 292 malpractice):
+  AUC 0.9885 · review line: 95% caught, 8.9% reviewed, 3.7% honest flagged
+  Review first: 5.7% of candidates, 91% of cases
+  Simple rule (50+ char paste or tab switch): 79% honest flagged, 75% caught
+Demo sitting (fairness report, 187 honest):
+  Phone vs laptop honest flagged: old rules +86 pts; FairProctor no clear
+  difference · Review first: FairProctor 0% honest in every group
+Demo story: Priya cleared (38), old rules rank #9 of 202; Rahul Review first
+  (97), rank #6, old rules ~#82
+Own videos: flag-everything proctor 120–390 alerts/hour; FairProctor 0
+Engineering: 37 backend tests (SQLite + PostgreSQL), 6 browser suites
+Real pilot: [fill after the pilot from reports/PILOT_RESULTS.md]
+==============================================================================

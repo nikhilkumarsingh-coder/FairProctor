@@ -1,0 +1,41 @@
+{
+  "n_sessions": 5125,
+  "n_malpractice": 292,
+  "auc": 0.9885,
+  "average_precision": 0.9471,
+  "precision_at_k": {
+    "25": 1.0,
+    "50": 1.0,
+    "100": 1.0,
+    "200": 0.975,
+    "292": 0.911
+  },
+  "review_line": {
+    "recall": 0.952,
+    "queue_fraction": 0.089,
+    "honest_flagged": 0.037
+  },
+  "review_first": {
+    "n": 295,
+    "precision": 0.902
+  },
+  "recall_by_type": {
+    "copy_pair": 0.885,
+    "inject": 1.0,
+    "transcribe": 0.909,
+    "web_paste": 1.0
+  },
+  "honest_flagged_by_group": {
+    "fast_experts": 0.187,
+    "own_small_pastes": 0.037,
+    "left_tab_briefly": 0.031,
+    "all_honest": 0.037
+  },
+  "naive_rule": {
+    "rule": "any paste of 50+ characters or any tab switch",
+    "honest_flagged": 0.792,
+    "recall": 0.75
+  },
+  "train_seconds": 6.2,
+  "queued_with_moments": 0.989
+}

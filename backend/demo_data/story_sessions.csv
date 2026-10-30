@@ -1,0 +1,3 @@
+key,roll_no,name,code,language,device,bandwidth_class,precheck_light,precheck_framing,truth,room
+priya,STORY01,Priya Sharma,PRIYA1,en,phone,low,dim,ok,none,shared_home
+rahul,STORY02,Rahul Verma,RAHUL1,en,desktop,normal,ok,ok,second_phone,alone

@@ -1,0 +1,21 @@
+text,option_a,option_b,option_c,option_d,correct,kind
+A train travels 240 km in 4 hours. What is its average speed?,50 km/h,60 km/h,70 km/h,80 km/h,B,mcq
+What is 15% of 360?,48,52,54,60,C,mcq
+"What comes next: 3, 6, 12, 24, ?",30,36,48,60,C,mcq
+"If 5 pens cost ₹60, how much do 8 pens cost?",₹84,₹90,₹96,₹100,C,mcq
+Which one is the odd one out?,Apple,Mango,Potato,Banana,C,mcq
+A shopkeeper buys an item for ₹800 and sells it for ₹920. What is the profit percentage?,12%,15%,18%,20%,B,mcq
+"If CAT is written as DBU, how is DOG written?",EPH,EPG,FPH,DPH,A,mcq
+"What is the average of 12, 18, 20 and 30?",18,19,20,21,C,mcq
+In a class of 40 students the ratio of boys to girls is 3 : 2. How many girls are there?,12,16,18,24,B,mcq
+"What is the simple interest on ₹5,000 at 8% per year for 3 years?","₹1,000","₹1,200","₹1,500","₹1,800",B,mcq
+"A can finish a job in 10 days and B in 15 days. Working together, how long will they take?",5 days,6 days,7.5 days,8 days,B,mcq
+What is the angle between the hour hand and the minute hand at 3:00?,60°,90°,120°,180°,B,mcq
+"Rahul faces North, turns right, then turns right again. Which direction is he facing now?",East,West,South,North,C,mcq
+Which word means the same as RAPID?,Slow,Quick,Calm,Heavy,B,mcq
+"What comes next: A, C, F, J, ?",M,N,O,P,C,mcq
+"If x + 7 = 19, what is x?",10,11,12,13,C,mcq
+What is the area of a rectangle 12 cm long and 7 cm wide?,38 cm²,72 cm²,84 cm²,96 cm²,C,mcq
+What is 25 × 16? (type the number),,,,,400,short
+How many seconds are there in one hour? (type the number),,,,,3600,short
+"What comes next: 2, 5, 10, 17, 26, ? (type the number)",,,,,37,short

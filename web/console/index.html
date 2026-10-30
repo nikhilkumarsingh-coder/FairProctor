@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrity review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF; --sheet:#FCF4F4; --rose:#E9C3C6; --rose-ink:#B5838A;
+  --ink:#1E2A4A; --ink-2:#4A5675; --ink-3:#7E879E; --rule:#E6E2E6;
+  --red:#B3261E; --amber:#B86E12; --env:#9AA3A0; --env-2:#CDD3D0; --ok:#3F7A5E;
+  --fam-timing:#B3261E; --fam-pause:#7A2E8E; --fam-focus:#B86E12; --fam-paste:#8C5A12; --fam-match:#1F5FA8; --fam-person:#A33A6B;
+  --focus-ring:#1F5FA8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#151A26; --sheet:#1C2231; --rose:#5A3E46; --rose-ink:#C9959C;
+    --ink:#E9ECF4; --ink-2:#B9C0D2; --ink-3:#8790A6; --rule:#2B3346;
+    --red:#F07A70; --amber:#E5A24B; --env:#6C7774; --env-2:#3A4442; --ok:#7FC4A2;
+    --fam-timing:#F07A70; --fam-pause:#C99BDB; --fam-focus:#E5A24B; --fam-paste:#D4A45A; --fam-match:#7EB0EE; --fam-person:#E58DB6;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151A26; --sheet:#1C2231; --rose:#5A3E46; --rose-ink:#C9959C;
+  --ink:#E9ECF4; --ink-2:#B9C0D2; --ink-3:#8790A6; --rule:#2B3346;
+  --red:#F07A70; --amber:#E5A24B; --env:#6C7774; --env-2:#3A4442; --ok:#7FC4A2;
+  --fam-timing:#F07A70; --fam-pause:#C99BDB; --fam-focus:#E5A24B; --fam-paste:#D4A45A; --fam-match:#7EB0EE; --fam-person:#E58DB6;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+a{color:var(--fam-match)}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:baseline;gap:24px;padding:14px 20px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.top h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.01em}
+.top .stats{display:flex;gap:22px;color:var(--ink-2);font-size:14px;flex-wrap:wrap}
+.top .stats b{color:var(--ink);font-weight:700}
+.top .spacer{flex:1}
+
+/* ---------- layout ---------- */
+.wrap{display:grid;grid-template-columns:minmax(320px,400px) 1fr;height:calc(100% - 56px)}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;height:auto}.list{max-height:none}}
+.list{border-right:1px solid var(--rule);overflow:auto;display:flex;flex-direction:column}
+.filters{padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:2}
+.filters select,.filters input{border:1px solid var(--rule);border-radius:6px;padding:6px 8px;background:var(--paper)}
+.filters input{flex:1;min-width:110px}
+.count{padding:8px 16px;color:var(--ink-3);font-size:13px}
+.row{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:12px 16px;border-bottom:1px solid var(--rule);cursor:pointer;background:none;border-left:3px solid transparent;text-align:left;width:100%;border-top:0;border-right:0}
+.row:hover{background:var(--sheet)}
+.row[aria-current="true"]{background:var(--sheet);border-left-color:var(--ink)}
+.score{font-size:20px;font-weight:700;line-height:1;text-align:right}
+.score small{display:block;font-size:11px;font-weight:400;color:var(--ink-3);margin-top:4px}
+.band-review_first .score{color:var(--red)}
+.band-review .score{color:var(--amber)}
+.band-clear .score{color:var(--ok)}
+.row .sid{font-weight:700}
+.row .meta{color:var(--ink-3);font-size:12.5px}
+.row .hl{font-size:13.5px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px}
+.more{margin:12px 16px;padding:8px;border:1px solid var(--rule);border-radius:6px;background:none;cursor:pointer}
+
+/* ---------- detail ---------- */
+.detail{overflow:auto;padding:24px 28px 60px}
+@media (max-width:600px){.detail{padding:20px 16px 48px}}
+.empty{color:var(--ink-3);margin-top:20vh;text-align:center}
+.head{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.head h2{margin:0;font-size:26px;letter-spacing:-.01em}
+.head .sub{color:var(--ink-3);font-size:13.5px}
+.dial{min-width:96px;text-align:center;padding:10px 12px;border-radius:10px;background:var(--sheet)}
+.dial .n{font-size:34px;font-weight:700;line-height:1}
+.dial .l{font-size:12px;color:var(--ink-2)}
+.band-review_first .dial .n{color:var(--red)}
+.band-review .dial .n{color:var(--amber)}
+.band-clear .dial .n{color:var(--ok)}
+.headline{font-size:18px;line-height:1.45;max-width:72ch;margin:18px 0 6px}
+
+/* timeline: the answer sheet */
+.sheet{background:var(--sheet);border-radius:10px;padding:14px 16px 10px;margin:18px 0 8px}
+.sheet svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-2px;margin-right:5px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--paper);font-size:12.5px;padding:6px 8px;border-radius:6px;max-width:280px;z-index:10;display:none}
+
+h3{font-size:16px;margin:26px 0 8px}
+.reason{border-left:3px solid var(--c);padding:2px 0 2px 14px;margin:14px 0}
+.reason .t{font-weight:700;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.reason .w{font-weight:400;color:var(--ink-3);font-size:13px}
+.reason p{margin:4px 0;max-width:78ch}
+.moments{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.mom{border:1px solid var(--rule);background:var(--paper);border-radius:999px;padding:2px 10px;font-size:12.5px;cursor:pointer}
+.mom:hover,.mom.on{border-color:var(--c);color:var(--c)}
+.context{background:var(--sheet);border-radius:10px;padding:12px 16px;max-width:80ch}
+.context h3{margin:0 0 6px}
+.context ul{margin:0;padding-left:18px;color:var(--ink-2)}
+.context li{margin:3px 0}
+.decide{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.decide textarea{width:100%;max-width:78ch;min-height:64px;border:1px solid var(--rule);border-radius:8px;padding:8px;background:var(--paper)}
+.btn{border:1px solid var(--ink);background:var(--paper);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.danger{border-color:var(--red);color:var(--red)}
+.saved{color:var(--ok);font-size:13.5px}
+.small{font-size:13px;color:var(--ink-3)}
+.legacy{color:var(--ink-3);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.mom,.row{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Integrity review</h1>
+  <div class="stats" id="stats"></div>
+  <div class="spacer"></div>
+  <a href="/precheck" class="small">Candidate pre-check</a>
+</header>
+<div class="wrap">
+  <nav class="list" aria-label="Review queue">
+    <div class="filters">
+      <select id="f-band" aria-label="Which sessions">
+        <option value="queue">Needs review</option>
+        <option value="review_first">Review first</option>
+        <option value="review">Review</option>
+        <option value="clear">Cleared automatically</option>
+        <option value="all">All sessions</option>
+      </select>
+      <select id="f-bw" aria-label="Connection">
+        <option value="all">Any connection</option>
+        <option value="low">Low bandwidth</option>
+        <option value="normal">Normal bandwidth</option>
+      </select>
+      <select id="f-fam" aria-label="Signal">
+        <option value="">Any signal</option>
+        <option value="match">Answers match</option>
+        <option value="pause">Silent pauses</option>
+        <option value="timing">Answer timing</option>
+        <option value="focus">Left test window</option>
+        <option value="paste">Pasted text</option>
+        <option value="person">Another person</option>
+      </select>
+      <input id="f-q" placeholder="Session ID" aria-label="Find session">
+    </div>
+    <div class="count" id="count"></div>
+    <div id="rows"></div>
+    <button class="more" id="more" hidden>Show more</button>
+  </nav>
+  <main class="detail" id="detail"><p class="empty">Pick a session from the queue. The queue is ordered by how likely it is to involve real malpractice.</p></main>
+</div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const FAM = {timing:'--fam-timing',pause:'--fam-pause',focus:'--fam-focus',paste:'--fam-paste',match:'--fam-match',person:'--fam-person'};
+const BAND = {review_first:'Review first',review:'Review',clear:'Cleared'};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mmss = t => { t = Math.max(0, Math.round(t)); return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0'); };
+let offset = 0, current = null, metrics = null;
+
+async function loadStats(){
+  metrics = await (await fetch('/api/metrics')).json();
+  const h = metrics.holdout_policy, f = metrics.false_flag_rate_by_bandwidth;
+  $('#stats').innerHTML =
+    `<span><b>${metrics.n_sessions.toLocaleString()}</b> sessions</span>` +
+    `<span>Top of queue precision <b>${Math.round(metrics.precision_at_k['100']*100)}%</b> (first 100)</span>` +
+    `<span>Honest sessions sent to review: low bandwidth <b>${Math.round(f.low.ours*100)}%</b>, normal <b>${Math.round(f.normal.ours*100)}%</b></span>`;
+}
+
+async function loadQueue(append){
+  if (!append) offset = 0;
+  const p = new URLSearchParams({band:$('#f-band').value, bandwidth:$('#f-bw').value, family:$('#f-fam').value, q:$('#f-q').value, offset, limit:60});
+  const d = await (await fetch('/api/queue?' + p)).json();
+  $('#count').textContent = `${d.total.toLocaleString()} of ${d.n_sessions.toLocaleString()} sessions · ${d.counts.review_first.toLocaleString()} review first, ${d.counts.review.toLocaleString()} review, ${d.counts.clear.toLocaleString()} cleared automatically`;
+  const html = d.rows.map(r => `
+    <button class="row band-${r.band}" data-sid="${r.session_id}" ${current===r.session_id?'aria-current="true"':''}>
+      <div class="score">${Math.round(r.score)}<small>#${r.rank}</small></div>
+      <div><span class="sid">${r.session_id}</span> <span class="meta">${r.bandwidth === 'low' ? 'Low bandwidth' : 'Normal bandwidth'}, ${r.device}</span>
+        <div class="hl">${esc(r.headline)}</div></div>
+    </button>`).join('');
+  if (append) $('#rows').insertAdjacentHTML('beforeend', html); else $('#rows').innerHTML = html;
+  offset += d.rows.length;
+  $('#more').hidden = offset >= d.total;
+}
+
+async function openSession(sid){
+  current = sid;
+  document.querySelectorAll('.row').forEach(r => r.toggleAttribute('aria-current', r.dataset.sid === sid));
+  history.replaceState(null, '', '#' + sid);
+  const d = await (await fetch('/api/session/' + sid)).json();
+  const e = d.explanation;
+  const reasons = e.reasons.map(r => `
+    <section class="reason" style="--c:var(${FAM[r.family]})">
+      <div class="t">${esc(r.title)} <span class="w">${Math.round(r.weight*100)}% of the score</span></div>
+      ${r.evidence.length ? r.evidence.map(ev => `
+        <p>${esc(ev.text)}</p>
+        <div class="moments">${ev.moments.slice(0,14).map(m => `<button class="mom" data-t="${m.t}" data-l="${esc(m.label)}">${mmss(m.t)} ${esc(m.label)}</button>`).join('')}</div>`).join('')
+        : `<p>${esc(r.fallback)}</p>`}
+    </section>`).join('') || '<p>No behavioural signal contributed to this score.</p>';
+  $('#detail').innerHTML = `
+    <div class="head band-${e.band}">
+      <div class="dial"><div class="n">${Math.round(e.score)}</div><div class="l">${BAND[e.band]}</div></div>
+      <div>
+        <h2>${sid}</h2>
+        <div class="sub">Rank ${e.rank} of ${metrics.n_sessions.toLocaleString()} · sitting ${d.meta.window_id} · ${d.meta.device}, ${d.meta.bandwidth_class === 'low' ? 'low bandwidth' : 'normal bandwidth'} · pre-check light: ${d.meta.precheck_light}</div>
+        <div class="legacy">Old rules raised ${e.legacy_flags.toLocaleString()} flags on this session.${d.label ? ` Sample label: ${d.label}.` : ''}</div>
+      </div>
+    </div>
+    <p class="headline">${esc(e.headline)}</p>
+    <div class="sheet">${timeline(d)}
+      <div class="legend">
+        <span><i style="background:var(--ink)"></i>Correct answer</span>
+        <span><i style="border:1.5px solid var(--ink);box-sizing:border-box"></i>Wrong answer</span>
+        <span><i style="background:var(--fam-pause);opacity:.55;border-radius:2px"></i>No input</span>
+        <span><i style="background:var(--fam-focus);border-radius:2px"></i>Left test window</span>
+        <span><i style="background:var(--env);border-radius:2px"></i>Camera frame (gaps = no video)</span>
+        <span><i style="background:var(--fam-person);border-radius:2px"></i>Two faces in frame</span>
+      </div>
+    </div>
+    <h3>Why it was flagged</h3>
+    ${reasons}
+    <div class="context"><h3>Not counted against the candidate</h3><ul>${e.context.map(c => `<li>${esc(c)}</li>`).join('') || '<li>Nothing unusual about the environment.</li>'}</ul></div>
+    <h3>Your decision</h3>
+    <div class="decide">
+      <textarea id="note" placeholder="Note for the record (what you checked, what you saw)"></textarea>
+      <button class="btn danger" data-dec="confirm">Confirm malpractice</button>
+      <button class="btn primary" data-dec="clear">Clear candidate</button>
+      <button class="btn" data-dec="need_more">Ask candidate to explain</button>
+      <span class="saved" id="saved" role="status"></span>
+    </div>
+    <p class="small">The candidate sees <a href="/candidate/${sid}" target="_blank">this page</a>: the same moments in plain language, without other candidates' IDs.</p>`;
+  bindTimeline(d);
+  $('#detail').scrollTop = 0;
+}
+
+/* ---------- the answer-sheet timeline ---------- */
+function timeline(d){
+  const W = 1000, L = 52, R = 10, dur = Math.max(d.duration, 60);
+  const x = t => L + (W - L - R) * Math.min(t, dur) / dur;
+  const ev = d.events, fr = d.frames;
+  const shown = {}, ans = {};
+  ev.forEach(e => { if (e.type === 'item_shown') shown[e.item] = e.t; if (e.type === 'answer') ans[e.item] = e; });
+  let s = `<svg viewBox="0 0 ${W} 150" role="img" aria-label="Session timeline">`;
+  // time ticks
+  for (let m = 0; m <= dur/60; m += 5){ const xx = x(m*60);
+    s += `<line x1="${xx}" x2="${xx}" y1="10" y2="138" stroke="var(--rule)" stroke-width="1"/><text x="${xx}" y="150" font-size="11" fill="var(--ink-3)" text-anchor="middle">${m}m</text>`; }
+  // row labels
+  s += `<text x="0" y="22" font-size="11" fill="var(--ink-3)">Evidence</text><text x="0" y="66" font-size="11" fill="var(--ink-3)">Answers</text><text x="0" y="118" font-size="11" fill="var(--ink-3)">Camera</text>`;
+  // evidence bands
+  d.explanation.reasons.forEach((r, ri) => r.evidence.forEach(e => {
+    if (e.t1 > e.t0) s += `<rect class="evband" x="${x(e.t0)}" y="${12 + (ri%2)*7}" width="${Math.max(3, x(e.t1)-x(e.t0))}" height="6" rx="3" fill="var(${FAM[r.family]})" data-tip="${esc(r.title)}"/>`;
+  }));
+  // idle + focus
+  let st = null;
+  ev.forEach(e => {
+    if (e.type === 'idle_start') st = e.t;
+    if (e.type === 'idle_end' && st != null){ s += `<rect x="${x(st)}" y="47" width="${Math.max(2,x(e.t)-x(st))}" height="40" fill="var(--fam-pause)" opacity=".18" data-tip="No input for ${Math.round(e.t-st)} s at ${mmss(st)}"/>`; st = null; }
+  });
+  let fl = null;
+  ev.forEach(e => {
+    if (e.type === 'focus_lost') fl = e.t;
+    if (e.type === 'focus_gained' && fl != null){ s += `<rect x="${x(fl)}" y="89" width="${Math.max(3,x(e.t)-x(fl))}" height="5" rx="2" fill="var(--fam-focus)" data-tip="Left test window ${mmss(fl)} for ${Math.round(e.t-fl)} s"/>`; fl = null; }
+    if (e.type === 'paste') s += `<path d="M${x(e.t)-5} 40 l5 6 l5 -6 z" fill="var(--fam-paste)" data-tip="Paste of ${e.chars} characters at ${mmss(e.t)} (Q${e.item+1})"/>`;
+  });
+  // answer bubbles
+  Object.keys(ans).forEach(q => {
+    const a = ans[q], t0 = shown[q] ?? a.t, cx = x(a.t);
+    const secs = Math.round(a.t - t0);
+    s += `<line x1="${x(t0)}" x2="${cx}" y1="67" y2="67" stroke="var(--rose)" stroke-width="2"/>`;
+    s += `<circle cx="${cx}" cy="67" r="6.5" fill="${a.correct ? 'var(--ink)' : 'var(--sheet)'}" stroke="var(--ink)" stroke-width="1.5" data-tip="Q${+q+1}: ${a.option === 'TEXT' ? 'short answer' : 'option ' + a.option}, ${a.correct ? 'correct' : 'wrong'}, ${secs} s, at ${mmss(a.t)}"/>`;
+  });
+  // camera coverage
+  if (fr){
+    for (let i = 0; i < fr.t.length; i++){
+      const xx = x(fr.t[i]);
+      const col = fr.faces[i] >= 2 ? 'var(--fam-person)' : fr.vis[i] ? 'var(--env)' : 'var(--env-2)';
+      const h = fr.gaze[i] === 'down' ? 8 : 14;
+      s += `<rect x="${xx-.6}" y="${120 - h}" width="1.2" height="${h}" fill="${col}"/>`;
+    }
+  } else s += `<text x="${L}" y="118" font-size="12" fill="var(--ink-3)">No video received</text>`;
+  s += `<g id="markers"></g></svg>`;
+  return s;
+}
+
+function bindTimeline(d){
+  const svg = $('#detail svg'), tip = $('#tip');
+  const dur = Math.max(d.duration, 60), W = 1000, L = 52, R = 10;
+  svg.addEventListener('mousemove', e => {
+    const t = e.target.closest('[data-tip]');
+    if (!t){ tip.style.display = 'none'; return; }
+    tip.textContent = t.dataset.tip; tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - 290) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  });
+  svg.addEventListener('mouseleave', () => tip.style.display = 'none');
+  document.querySelectorAll('.mom').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.mom.on').forEach(o => o.classList.remove('on'));
+    b.classList.add('on');
+    const xx = L + (W - L - R) * Math.min(+b.dataset.t, dur) / dur;
+    $('#markers').innerHTML = `<line x1="${xx}" x2="${xx}" y1="8" y2="128" stroke="var(--red)" stroke-width="2"/><text x="${Math.min(xx+4, W-150)}" y="36" font-size="12" font-weight="700" fill="var(--red)">${mmss(+b.dataset.t)} ${esc(b.dataset.l)}</text>`;
+    svg.scrollIntoView({block:'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  }));
+  document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', async () => {
+    const r = await fetch('/api/review/' + current, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({decision:b.dataset.dec, note:$('#note').value})});
+    $('#saved').textContent = r.ok ? ({confirm:'Recorded: malpractice confirmed.', clear:'Recorded: candidate cleared.', need_more:'Recorded: candidate asked to explain.'})[b.dataset.dec] : 'Could not save. Check the service is running and try again.';
+  }));
+}
+
+$('#rows').addEventListener('click', e => { const r = e.target.closest('.row'); if (r) openSession(r.dataset.sid); });
+$('#more').addEventListener('click', () => loadQueue(true));
+['#f-band','#f-bw','#f-fam'].forEach(s => $(s).addEventListener('change', () => loadQueue()));
+let qt; $('#f-q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => loadQueue(), 250); });
+
+(async () => {
+  await loadStats(); await loadQueue();
+  const first = location.hash.slice(1) || document.querySelector('.row')?.dataset.sid;
+  if (first) openSession(first);
+})();
+</script>
+</body>
+</html>
