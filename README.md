@@ -135,11 +135,29 @@ cd frontend && npm install && npm run dev      # http://localhost:5173, /api pro
 A Playwright test in [`e2e/`](e2e/README.md) drives the whole demo in Chromium (candidate on a phone, two copying
 candidates, admin close & score, reviewer decision, appeal) and saves screenshots.
 
-| Candidate | Reviewer |
-|---|---|
-| <img src="docs/screenshots/05-candidate-exam.jpg" width="260"> <img src="docs/screenshots/09-candidate-result.jpg" width="260"> | <img src="docs/screenshots/31-review-session.jpg" width="520"> |
+### Screens
 
-More in [`docs/screenshots/`](docs/screenshots).
+**Candidate (phone)**
+
+| Pre-check | Microphone (optional) | Test, full screen | Result and what was not counted |
+|---|---|---|---|
+| <img src="docs/screenshots/04-candidate-precheck.jpg" width="190"> | <img src="docs/screenshots/19-candidate-precheck-mic.jpg" width="190"> | <img src="docs/screenshots/05-candidate-exam.jpg" width="190"> | <img src="docs/screenshots/09-candidate-result.jpg" width="190"> |
+
+| Consent (हिन्दी) | Left the screen: a notice, not an accusation | Left full screen (kiosk mode) | Test reopened by a reviewer |
+|---|---|---|---|
+| <img src="docs/screenshots/03-candidate-consent-hindi.jpg" width="190"> | <img src="docs/screenshots/17-candidate-left-screen-popup.jpg" width="190"> | <img src="docs/screenshots/70-kiosk-phone-full-screen.jpg" width="190"> | <img src="docs/screenshots/38-candidate-reopened.jpg" width="190"> |
+
+**Reviewer and admin**
+
+| Evidence with a timeline of moments | Proctoring rules and the reopen record |
+|---|---|
+| <img src="docs/screenshots/31-review-session.jpg" width="420"> | <img src="docs/screenshots/39-reviewer-rules.jpg" width="420"> |
+| **Live monitor** | **Reopen a test a rule ended** |
+| <img src="docs/screenshots/26-live-monitor.jpg" width="420"> | <img src="docs/screenshots/37-reviewer-reopen.jpg" width="420"> |
+| **Device check and full-screen exits** | **Sound lane (speech-like sound, never counted alone)** |
+| <img src="docs/screenshots/28-live-device-check.jpg" width="420"> | <img src="docs/screenshots/72-reviewer-sound-lane.jpg" width="420"> |
+
+All screenshots are taken by the browser tests on the current build; more in [`docs/screenshots/`](docs/screenshots).
 
 ## Two apps: candidates and staff
 
